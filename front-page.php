@@ -73,7 +73,7 @@
                 } wp_reset_postdata(); 
             ?>
 
-            <!-- Custome Query Ends-->
+            <!-- Custom Query Ends-->
           
           
 
