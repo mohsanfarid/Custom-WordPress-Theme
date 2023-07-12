@@ -20,4 +20,40 @@
 
     add_action('after_setup_theme','university_features');
 
+
+    // Transfered to mu-plugins folder to avoid lost of data on theme change, into must use plugins//
+
+
+    //Custom Post Types Start//
+   // function university_post_types (){
+    //    register_post_type('event', array(
+    //        'public' => true,
+     //       'labels' => array(
+      //          'name' => 'Events'
+      //      ),
+     //       'menu_icon' => 'dashicons-calendar'
+     //   ));
+   // }
+   // add_action('init', 'university_post_types');
+    //Custom Post Types Ends//
+
+    //Manipulate Default URL qUEIRES for Events ARCHIVE
+
+    function university_adjust_queries($query){
+        $today = date('Ymd');
+        if(!is_admin() AND is_post_type_archive('event') AND $query->is_main_query()) {
+            $query->set('meta_key', 'event_date');
+            $query->set('orderby', 'meta_value');
+            $query->set('order', 'ASC');
+            $query->set('meta_query', array(
+                array(
+                  'key' => 'event_date',
+                  'compare' => '>=',
+                  'value' => $today,
+                  'type' => 'numeric'
+                )));
+            
+        }
+    }
+    add_action('pre_get_posts', 'university_adjust_queries')
 ?>
