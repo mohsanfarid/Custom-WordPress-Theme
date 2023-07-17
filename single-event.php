@@ -24,6 +24,24 @@
     <div class="geenric-content">
         <?php the_content()?>
     </div>
+
+      <?php 
+        $relatedPrograms = get_field('related_program');
+        
+        if($relatedPrograms){
+          echo '<hr>';
+          echo '<h2 class="headline headline--medium">Related Program(s)</h2>';
+          echo '<ul class="link-list min-list">';
+          foreach($relatedPrograms as $program){
+            ?>
+  
+              <li><a href="<?php echo get_the_permalink($program) ?>"><?php echo get_the_title($program);?></a></li>
+            <?php
+          }
+          echo '</ul>';
+
+        }
+      ?>
     </div>
 
     <?php }
