@@ -25,8 +25,49 @@
         <?php the_content()?>
     </div>
 
+
+
+
     <?php
-//Custom query to display upcomeing events for this program//
+//Custom query to display Professors for this program//
+$realtedProfessors = new WP_Query(array(
+    'posts_per_page' => -1,
+    'post_type' => 'professor',
+    'orderby' => 'title',
+    'order' => 'ASC',
+    // filtering not showing old events date
+    'meta_query' => array(
+      array(
+        'key' => 'related_program',
+        'compare' => 'LIKE',
+        'value' => '"' . get_the_ID() . '"'
+      )
+    )
+));
+
+if($realtedProfessors->have_posts()){
+    echo '<hr class="section-break">';
+echo '<h2 class="headline headline--medium"> ' . get_the_title() . ' Professors</h2>';
+echo '<ul class="professor-cards">';
+while($realtedProfessors->have_posts()){
+    $realtedProfessors->the_post(); ?>
+        <li class="professor-card__list-item">
+          <a class="professor-card" href="<?php the_permalink();?>">
+          <img class="professor-card__image" src="<?php the_post_thumbnail_url('profressorLandscape');?>">
+          <span class="professor-card__name "><?php the_title(); ?></span>  
+        
+
+        </a>
+        </li>
+   
+   <?php
+}
+echo '</ul>';
+}
+
+wp_reset_postdata(); // if not inserted the code below will not be displayed, when run multiple custom queries run this in between to get the results
+
+//Custom query to display upcoming events for this program//
 $today = date('Ymd');
         $homePageEvent = new WP_Query(array(
             'posts_per_page' => 2,
