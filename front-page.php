@@ -1,6 +1,34 @@
-<?php get_header();
+<head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript"> 
+      $(document).ready( function() {
+        $('#deletesuccess').delay(1000).fadeOut();
+      });
+    </script>
+  </head>
+  
+  
+  <?php get_header();
 
     ?>
+
+<div id="deletesuccess" class="page-loader">
+      <div class="page-loading-wrapper">
+        <div class="loading">
+          <span data-text="U">U</span>
+          <span data-text="N">N</span>
+          <span data-text="I">I</span>
+          <span data-text="V">V</span>
+          <span data-text="E">E</span>
+          <span data-text="R">R</span>
+          <span data-text="S">S</span>
+          <span data-text="I">I</span>
+          <span data-text="T">T</span>
+          <span data-text="Y">Y</span>
+        </div>
+      </div>
+    </div>
+
     <div class="page-banner">
       <div class="page-banner__bg-image" style="background-image: url(<?php echo get_theme_file_uri('/images/library-hero.jpg') ?>)"></div>
       <div class="page-banner__content container t-center c-white">
