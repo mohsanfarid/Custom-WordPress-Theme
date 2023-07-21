@@ -113,6 +113,7 @@ __webpack_require__.r(__webpack_exports__);
 class Search {
   // 1. describe and create/initiate our object
   constructor() {
+    this.addSearchHtml();
     this.resultsDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#search-overlay__results");
     this.openButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".js-search-trigger");
     this.closeButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay__close");
@@ -142,7 +143,7 @@ class Search {
           this.resultsDiv.html('<div class="spinner-loader"></div>');
           this.isSpinnerVisible = true;
         }
-        this.typingTimer = setTimeout(this.getResults.bind(this), 2000);
+        this.typingTimer = setTimeout(this.getResults.bind(this), 750);
       } else {
         this.resultsDiv.html("");
         this.isSpinnerVisible = false;
@@ -151,9 +152,82 @@ class Search {
     this.previousValue = this.searchField.val();
   }
   getResults() {
-    this.resultsDiv.html("Imagine real search results here...");
-    this.isSpinnerVisible = false;
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().getJSON(uniData.root_url + '/wp-json/university/v1/search?term=' + this.searchField.val(), results => {
+      this.resultsDiv.html(`
+        <div class="row">
+          <div class="one-third">
+            <h2 class="search-overlay__section-title">General Info</h2>
+                    ${results.generalInfo.length ? '<ul class="link-list min-list">' : '<p>No Information Found</p>'}
+                    ${results.generalInfo.map(item => ` <li><a href="${item.permalink}">${item.title}</a> ${item.postType == 'post' ? `by ${item.authorName}` : ''}</li>`).join('-')}
+                    ${results.generalInfo.length ? '</ul>' : ''}
+          </div>
+
+          <div class="one-third">
+          <h2 class="search-overlay__section-title">Programs</h2>
+                  ${results.program.length ? '<ul class="link-list min-list">' : '<p>No Programs Found</p>'}
+                  ${results.program.map(item => ` <li><a href="${item.permalink}">${item.title}</a> ${item.postType == 'post' ? `by ${item.authorName}` : ''}</li>`).join('-')}
+                  ${results.program.length ? '</ul>' : ''}
+
+
+                  <h2 class="search-overlay__section-title">Professors</h2>
+                  ${results.professors.length ? '<ul class="professor-cards">' : '<p>No Professors Found</p>'}
+                  ${results.professors.map(item => `
+                  <li class="professor-card__list-item">
+                  <a class="professor-card" href="${item.permalink}">
+                  <img class="professor-card__image" src="${item.image}">
+                  <span class="professor-card__name ">${item.title}</span>
+                </a>
+                </li>
+                  `).join('-')}
+                  ${results.professors.length ? '</ul>' : ''}
+        </div>
+
+          
+
+          <div class="one-third">
+          <h2 class="search-overlay__section-title">Events</h2>
+          ${results.events.length ? '' : '<p>No Events Found</p>'}
+                  ${results.events.map(item => `
+                  <div class="event-summary">
+                  <a class="event-summary__date t-center" href="${item.permalink}">
+                    <span class="event-summary__month">
+                      <!-- Getting the Event Date -->
+                      ${item.month}</span>
+                    <span class="event-summary__day">${item.day}</span>
+                  </a>
+                  <div class="event-summary__content">
+                    <h5 class="event-summary__title headline headline--tiny"><a href="${item.permalink}">${item.title}</a></h5>
+                    <p>${item.desc} <a href="${item.permalink}" class="nu gray">Learn more</a></p>
+                  </div>
+                </div>
+                  `).join('-')}
+
+          </div>
+        </div>
+      `);
+      this.isSpinnerVisible = false;
+    });
+
+    // delete this code
+    // $.when(
+    //      $.getJSON(uniData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val()),
+    //      $.getJSON(uniData.root_url + '/wp-json/wp/v2/pages?search=' + this.searchField.val())
+    //      ).then( (posts, pages) => {
+    //     var combinedResults = posts[0].concat(pages[0]);
+    //template literal ` ` is used to write html in more than one line//     
+    //Ternary operator is use to use if statements on template literal whihc is ${condition ? yay : nay}
+    //         this.resultsDiv.html(`
+    //                <h2 class="search-overlay__section-title">General Information</h2>
+    //               ${combinedResults.length ? '<ul class="link-list min-list">' : '<p>No Information Found</p>'}
+    //              ${combinedResults.map(item => ` <li><a href="${item.link}">${item.title.rendered}</a> ${item.type == 'post' ? `by ${item.authorName}` : ''}</li>`).join('-')}
+    //              ${combinedResults.length ? '</ul>' : ''}
+    //              `);
+    //               this.isSpinnerVisible = false;
+    // }, () => {
+    //     this.resultsDiv.html('<p>Unexpected Error</p>');
+    // }); 
   }
+
   keyPressDispatcher(e) {
     if (e.keyCode == 83 && !this.isOverlayOpen && !jquery__WEBPACK_IMPORTED_MODULE_0___default()("input, textarea").is(":focus")) {
       this.openOverlay();
@@ -165,14 +239,36 @@ class Search {
   openOverlay() {
     this.searchOverlay.addClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").addClass("body-no-scroll");
+    this.searchField.val('');
+    setTimeout(() => this.searchField.focus(), 301);
     console.log("our open method just ran!");
     this.isOverlayOpen = true;
+    return false;
   }
   closeOverlay() {
     this.searchOverlay.removeClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").removeClass("body-no-scroll");
     console.log("our close method just ran!");
     this.isOverlayOpen = false;
+  }
+  //to add html for search 
+  addSearchHtml() {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").append(`
+    <div class="search-overlay">
+    <div class="search-overlay__top">
+      <div class="container">
+        <i class="fa fa-search search-overlay__icon" aria-hidden="true"></i>
+        <input type="text" class="search-term" placeholder="What are you looking for?" id="search-term">
+        <i class="fa fa-window-close search-overlay__close" aria-hidden="true"></i>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div id="search-overlay__results"></div>
+    </div>
+
+  </div>
+    `);
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Search);
