@@ -14,8 +14,8 @@
         </p>
       </div>
 
-    <div class="geenric-content">
-        <?php the_content()?>
+    <div class="generic-content">
+        <?php the_field('main_body_content') ?>
     </div>
 
 
