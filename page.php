@@ -1,14 +1,11 @@
+<?php error_reporting(0); ?>
 <?php 
 
     get_header();
 
     while(have_posts()) {
     the_post(); 
-    pageBanner(array(
-      'title' => 'About Us',
-      'subtitle' => 'What We Do',
-      'photo' => 'https://marketplace.canva.com/EAFPlm92N5o/1/0/1600w/canva-colorful-photo-rainbow-facebook-cover-2vDB4UzBEdk.jpg'
-    ));
+    pageBanner();
     ?>
      
 
